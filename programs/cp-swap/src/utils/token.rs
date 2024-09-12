@@ -1,5 +1,5 @@
+use crate::error::ErrorCode;
 use anchor_lang::prelude::*;
-
 use anchor_spl::{
     token::{Token, TokenAccount},
     token_2022::{
@@ -17,6 +17,14 @@ use anchor_spl::{
         InitializeAccount3, Mint,
     },
 };
+use std::collections::HashSet;
+
+const MINT_WHITELIST: [&'static str; 4] = [
+    "HVbpJAQGNpkgBaYBZQBR1t7yFdvaYVp2vCQQfKKEN4tM",
+    "Crn4x1Y2HUKko7ox2EZMT6N2t2ZyH7eKtwkBGVnhEq1g",
+    "FrBfWJ4qE5sCzKm3k3JaAtqZcXUh4LvJygDeketsrsH4",
+    "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
+];
 
 pub fn transfer_from_user_to_pool_vault<'a>(
     authority: AccountInfo<'a>,
@@ -124,6 +132,9 @@ pub fn get_transfer_inverse_fee(mint_info: &AccountInfo, post_fee_amount: u64) -
     if *mint_info.owner == Token::id() {
         return Ok(0);
     }
+    if post_fee_amount == 0 {
+        return err!(ErrorCode::InvalidInput);
+    }
     let mint_data = mint_info.try_borrow_data()?;
     let mint = StateWithExtensions::<spl_token_2022::state::Mint>::unpack(&mint_data)?;
 
@@ -165,6 +176,10 @@ pub fn get_transfer_fee(mint_info: &AccountInfo, pre_fee_amount: u64) -> Result<
 pub fn is_supported_mint(mint_account: &InterfaceAccount<Mint>) -> Result<bool> {
     let mint_info = mint_account.to_account_info();
     if *mint_info.owner == Token::id() {
+        return Ok(true);
+    }
+    let mint_whitelist: HashSet<&str> = MINT_WHITELIST.into_iter().collect();
+    if mint_whitelist.contains(mint_account.key().to_string().as_str()) {
         return Ok(true);
     }
     let mint_data = mint_info.try_borrow_data()?;

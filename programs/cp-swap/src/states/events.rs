@@ -2,10 +2,11 @@ use anchor_lang::prelude::*;
 
 /// Emitted when deposit and withdraw
 #[event]
+#[cfg_attr(feature = "client", derive(Debug))]
 pub struct LpChangeEvent {
     #[index]
     pub pool_id: Pubkey,
-    pub lp_amount: u64,
+    pub lp_amount_before: u64,
     /// pool vault sub trade fees
     pub token_0_vault_before: u64,
     /// pool vault sub trade fees
@@ -22,6 +23,7 @@ pub struct LpChangeEvent {
 
 /// Emitted when swap
 #[event]
+#[cfg_attr(feature = "client", derive(Debug))]
 pub struct SwapEvent {
     #[index]
     pub pool_id: Pubkey,

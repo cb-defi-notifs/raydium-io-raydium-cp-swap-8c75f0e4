@@ -8,6 +8,17 @@ use crate::curve::fees::FEE_RATE_DENOMINATOR_VALUE;
 use anchor_lang::prelude::*;
 use instructions::*;
 
+#[cfg(not(feature = "no-entrypoint"))]
+solana_security_txt::security_txt! {
+    name: "raydium-cp-swap",
+    project_url: "https://raydium.io",
+    contacts: "link:https://immunefi.com/bounty/raydium",
+    policy: "https://immunefi.com/bounty/raydium",
+    source_code: "https://github.com/raydium-io/raydium-cp-swap",
+    preferred_languages: "en",
+    auditors: "https://github.com/raydium-io/raydium-docs/blob/master/audit/MadShield%20Q1%202024/raydium-cp-swap-v-1.0.0.pdf"
+}
+
 #[cfg(feature = "devnet")]
 declare_id!("CPMDWBwJDtYax9qW7AyRuVC19Cc4L4Vcy4n2BHAbHkCW");
 #[cfg(not(feature = "devnet"))]
@@ -32,7 +43,7 @@ pub mod create_pool_fee_reveiver {
 pub const AUTH_SEED: &str = "vault_and_lp_mint_auth_seed";
 
 #[program]
-pub mod cp_swap {
+pub mod raydium_cp_swap {
     use super::*;
 
     // The configuation of AMM protocol, include trade fee and protocol fee

@@ -1,6 +1,14 @@
 # raydium-cp-swap
 
-Raydium constant product AMM Program without place order to OpenBook. The curve algorithm is inspired by Solana's official token-swap.
+A revamped constant product AMM program optimized for straightforward pool deployment along with additional features and integrations:
+- No Openbook market ID is required for pool creation
+- Token22 is supported
+- Built-in price oracle
+- Optimized in Anchor
+
+The program has been audited by [MadShield](https://www.madshield.xyz/). The report can be found [here](https://github.com/raydium-io/raydium-docs/tree/master/audit/MadShield%20Q1%202024).
+
+The program assets are in-scope for Raydium’s [Immunefi bug bounty program](https://immunefi.com/bug-bounty/raydium/).
 
 ## Environment Setup
 
@@ -10,22 +18,13 @@ Raydium constant product AMM Program without place order to OpenBook. The curve 
 
 ## Quickstart
 
-Clone the repository and enter the source code directory.
+Clone the repository and test the program.
 
 ```shell
 
 git clone https://github.com/raydium-io/raydium-cp-swap
-cd raydium-cp-swap
+cd raydium-cp-swap && anchor test
 ```
-
-Build And deploy
-
-```shell
-anchor build
-anchor deploy
-```
-
-Attention, check your configuration and confirm the environment you want to deploy.
 
 ## License
 

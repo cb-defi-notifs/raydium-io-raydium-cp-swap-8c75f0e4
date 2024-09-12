@@ -90,7 +90,6 @@ pub fn deposit(
     maximum_token_0_amount: u64,
     maximum_token_1_amount: u64,
 ) -> Result<()> {
-    require_gt!(ctx.accounts.lp_mint.supply, 0);
     let pool_id = ctx.accounts.pool_state.key();
     let pool_state = &mut ctx.accounts.pool_state.load_mut()?;
     if !pool_state.get_status_by_bit(PoolStatusBitIndex::Deposit) {
@@ -141,6 +140,18 @@ pub fn deposit(
         transfer_token_1_fee
     );
 
+    emit!(LpChangeEvent {
+        pool_id,
+        lp_amount_before: pool_state.lp_supply,
+        token_0_vault_before: total_token_0_amount,
+        token_1_vault_before: total_token_1_amount,
+        token_0_amount,
+        token_1_amount,
+        token_0_transfer_fee: transfer_token_0_fee,
+        token_1_transfer_fee: transfer_token_1_fee,
+        change_type: 0
+    });
+
     if transfer_token_0_amount > maximum_token_0_amount
         || transfer_token_1_amount > maximum_token_1_amount
     {
@@ -185,18 +196,7 @@ pub fn deposit(
         lp_token_amount,
         &[&[crate::AUTH_SEED.as_bytes(), &[pool_state.auth_bump]]],
     )?;
-
-    emit!(LpChangeEvent {
-        pool_id,
-        lp_amount: lp_token_amount,
-        token_0_vault_before: total_token_0_amount,
-        token_1_vault_before: total_token_1_amount,
-        token_0_amount,
-        token_1_amount,
-        token_0_transfer_fee: transfer_token_0_fee,
-        token_1_transfer_fee: transfer_token_1_fee,
-        change_type: 0
-    });
+    pool_state.recent_epoch = Clock::get()?.epoch;
 
     Ok(())
 }
